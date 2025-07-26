@@ -57,7 +57,7 @@ public class Spawn_Block
         // random so chieu
         int random_dimen = UnityEngine.Random.Range(0, 2);
 
-        Debug.Log("random_dimen: " + random_dimen);
+        //Debug.Log("random_dimen: " + random_dimen);
 
         if (random_dimen == 0)
         {

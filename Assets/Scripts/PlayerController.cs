@@ -82,9 +82,15 @@ public class PlayerController : MonoBehaviour
 
     bool SnapToGrid(Transform block)
     {
-        List<(int, int)> cells = new List<(int, int)>();
+        Dictionary<(int, int), GameObject> cells = new Dictionary<(int, int), GameObject>();
 
+        List<Transform> childList = new List<Transform>();
         foreach (Transform child in block)
+        {
+            childList.Add(child);
+        }
+
+        foreach (Transform child in childList)
         {
             Vector3 pos = child.position;
             int i = Mathf.RoundToInt(pos.x / BoardManager.Instance.widthCell);
@@ -96,7 +102,9 @@ public class PlayerController : MonoBehaviour
             if (BoardManager.Instance.grid[i, j].Item2 != 0)
                 return false;
 
-            cells.Add((i, j));
+            cells.Add((i, j), child.gameObject);
+            //children.Add(child.gameObject);
+            //child.SetParent(null);
         }
 
         int pivotI = Mathf.RoundToInt(block.position.x / BoardManager.Instance.widthCell);
@@ -108,14 +116,27 @@ public class PlayerController : MonoBehaviour
         Vector3 offset = block.position - pivotCellPos;
         block.position -= offset;
 
-        foreach (var (i, j) in cells)
+        foreach (Transform child in childList)
+        {
+            child.SetParent(null);
+        }
+
+        foreach (var ((i, j), gameObject) in cells)
         {
             BoardManager.Instance.grid[i, j].Item2 = block.GetComponent<Block>().getColor();
-            BoardManager.Instance.grid[i, j].Item3 = block.gameObject;
+            BoardManager.Instance.grid[i, j].Item3 = gameObject;
         }
+
+        BlockManager.Instance.DeleteBlock(block.gameObject);
+
+        int[,] arr_block = BoardManager.Instance.GetArrayGridByColor(1);
+
+        List<(int, int)> move = FLS.Instance.AlgorithmToConnectBridge(arr_block);
+
+        BoardManager.Instance.UpdateBoard(move);
+
         return true;
     }
-
 
     void HighlightNearestCells(Transform block)
     {

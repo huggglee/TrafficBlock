@@ -10,11 +10,24 @@ public class FLS
     // value, from the set of vertices
     // not yet included in shortest
     // path tree
-    List<(int, int)> move = new List<(int, int)>();
-    public FLS()
-    {
 
+    private static FLS instance;
+
+    private FLS() { }
+
+    public static FLS Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new FLS();
+            }
+            return instance;
+        }
     }
+
+    private List<(int, int)> move = new List<(int, int)>();
 
     public int minDistance(int[] dist, bool[] sptSet)
     {
@@ -35,19 +48,20 @@ public class FLS
     // the constructed distance array
     public void printSolution(int[] dist, int[] parent, int n, List<(int, int)> post, int length_arr_block)
     {
-        Console.WriteLine("Vertex\tDist\tPath");
+        Debug.Log("Vertex Dist Path");
         for (int i = 0; i < n; i++)
         {
             // Console.Write(post[i].Item1 + "/" + (length_arr_block - 1) + " ");
             if (post[i].Item1 == length_arr_block - 1 && dist[i] != int.MaxValue)
             {
-                Console.Write(i + "\t" + (dist[i] == int.MaxValue ? "INF" : dist[i].ToString()) + "\t");
+                Debug.Log(i + "\t" + (dist[i] == int.MaxValue ? "INF" : dist[i].ToString()) + "\t");
                 int numberMove = CountPath(parent, i, post);
                 PrintPath(parent, i, post);
                 Console.WriteLine();
 
                 if (move.Count == 0 || numberMove < move.Count)
                 {
+                    Debug.Log("Find move");
                     move.Clear();
                     AddPathToListMove(parent, i, post);
                 }
@@ -77,6 +91,7 @@ public class FLS
     // matrix representation
     public void dijkstra(int[,] graph, int src, List<(int, int)> post, int length_arr_block)
     {
+        Debug.Log("dijkstra");
         int V = graph.GetLength(0);
 
         int[] dist = new int[V]; // The output array. dist[i]
@@ -140,8 +155,9 @@ public class FLS
         printSolution(dist, parent, V, post, length_arr_block);
     }
 
-    public void AlgorithmToConnectBridge(int[,] arr_block)
+    public List<(int, int)> AlgorithmToConnectBridge(int[,] arr_block)
     {
+        //Debug.Log("Algorithm");
         int[,] arr_clean = CleanArray(arr_block);
 
         List<(int, int)> validCells = new List<(int, int)>();
@@ -200,10 +216,11 @@ public class FLS
             Console.WriteLine();
         }
 
-        Console.WriteLine("This is array graph");
+        //Debug.Log("This is array graph");
 
         for (int i = 0; i < validCells.Count; ++i)
         {
+            //Debug.Log(validCells[i].Item1 + " " + validCells[i].Item2);
             if (validCells[i].Item1 == 0)
             {
                 dijkstra(arr_graph, i, validCells, arr_block.GetLength(0));
@@ -211,6 +228,8 @@ public class FLS
         }
 
         printMoveShortest();
+
+        return move;
     }
 
     public int[,] CleanArray(int[,] arr_block)
