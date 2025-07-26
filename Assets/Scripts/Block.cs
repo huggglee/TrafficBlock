@@ -13,7 +13,9 @@ public class Block : MonoBehaviour
         foreach (var pos in cells)
         {
             GameObject cube = Instantiate(cubePrefab, transform);
-            cube.transform.localPosition = pos* scale;
+            Vector3 size = cube.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+            cube.transform.localPosition = new Vector3(pos.x * BoardManager.Instance.widthCell / size.x, pos.y * BoardManager.Instance.heigthCell / size.y, 0);
+            cube.transform.localScale = new Vector3(BoardManager.Instance.widthCell / size.x, BoardManager.Instance.heigthCell / size.y, 1);
             cube.GetComponent<Renderer>().material = material;
             this.color = color;
         }

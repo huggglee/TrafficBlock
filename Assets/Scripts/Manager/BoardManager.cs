@@ -16,7 +16,7 @@ public class BoardManager : MonoBehaviour
     // size cell
     public float widthCell;
     public float heigthCell;
-    private float gapCell = 0.1f;
+    public float gapCell = 0.1f;
 
     private List<(int, int)> highlightedCells = new List<(int, int)>();
     private Color currentColor;
@@ -53,7 +53,7 @@ public class BoardManager : MonoBehaviour
             {
                 grid[i,j].Item2 = 0;
                 GameObject cellItem = Instantiate(cellPrefab, new Vector3(i * widthCell, j * heigthCell, 10), Quaternion.identity);
-                Vector3 size = cellItem.GetComponent<Renderer>().bounds.size;
+                Vector3 size = cellItem.GetComponent<MeshFilter>().sharedMesh.bounds.size;
                 cellItem.transform.localScale = new Vector3(widthCell / size.x - gapCell, heigthCell / size.y - gapCell, 0.2f);
                 grid[i, j].Item1 = cellItem;
             }
