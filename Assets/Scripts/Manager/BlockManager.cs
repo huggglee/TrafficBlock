@@ -11,15 +11,32 @@ public class BlockManager : MonoBehaviour
     void Start()
     {
         LoadData();
-        SpawnVertical(); 
-        SpawnSquare();   
-        SpawnLShape();   
+        //SpawnVertical(); 
+        //SpawnSquare();   
+        //SpawnLShape();
+        SpawnRandom();
     }
     void LoadData()
     {
         materials[1] = Resources.Load<Material>("Materials/Blue_mat");
         materials[2] = Resources.Load<Material>("Materials/Red_mat");
         materials[3] = Resources.Load<Material>("Materials/Yellow_mat");
+    }
+
+    void SpawnRandom()
+    {
+        Vector3[] cells_1 = Spawn_Block.Instance.GetListVectorRandom();
+        Vector3[] cells_2 = Spawn_Block.Instance.GetListVectorRandom();
+        Vector3[] cells_3 = Spawn_Block.Instance.GetListVectorRandom();
+
+        for (int i = 0; i < cells_1.Length; ++i)
+        {
+            Debug.Log(cells_1[i]);
+        }
+
+        SpawnBlock(cells_1, new Vector3(0.5f, -4f, 10), materials[1],1);
+        SpawnBlock(cells_2, new Vector3(4f, -4f, 10), materials[1],1);
+        SpawnBlock(cells_3, new Vector3(7.5f, -4f, 10), materials[1],1);
     }
 
     void SpawnVertical()
