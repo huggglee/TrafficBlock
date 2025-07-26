@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class DragControllerMobile : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     private Camera cam;
     private Transform selectedBlock;
     private Vector3 offset;
     private Plane dragPlane;
-    private float fixedZ;  
+    private float fixedZ;
+    private Vector3 startPosition;
 
     void Start()
     {
@@ -29,23 +31,20 @@ public class DragControllerMobile : MonoBehaviour
                         if (hit.transform.parent != null && hit.transform.parent.CompareTag("Block"))
                         {
                             selectedBlock = hit.transform.parent;
-                        }
-                        else if (hit.transform.CompareTag("Block"))
-                        {
-                            selectedBlock = hit.transform;
+                            startPosition = selectedBlock.position;
                         }
                         else
-                        {
                             selectedBlock = null;
-                            break;
+
+                        if (selectedBlock != null)
+                        {
+                            fixedZ = selectedBlock.position.z;
+                            dragPlane = new Plane(Vector3.forward, new Vector3(0, 0, fixedZ));
+
+                            float distance;
+                            dragPlane.Raycast(ray, out distance);
+                            offset = selectedBlock.position - ray.GetPoint(distance);
                         }
-
-                        fixedZ = selectedBlock.position.z;
-                        dragPlane = new Plane(Vector3.forward, new Vector3(0, 0, fixedZ));
-
-                        float distance;
-                        dragPlane.Raycast(ray, out distance);
-                        offset = selectedBlock.position - ray.GetPoint(distance);
                     }
                     break;
 
@@ -57,17 +56,80 @@ public class DragControllerMobile : MonoBehaviour
                         if (dragPlane.Raycast(moveRay, out moveDistance))
                         {
                             Vector3 newPos = moveRay.GetPoint(moveDistance) + offset;
-                            newPos.z = fixedZ;   // giữ nguyên Z
+                            newPos.z = fixedZ;
                             selectedBlock.position = newPos;
+
+                            HighlightNearestCells(selectedBlock);
                         }
                     }
                     break;
-
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
+                    if (selectedBlock != null)
+                    {
+                        bool placed = SnapToGrid(selectedBlock);
+                        if (!placed)
+                        {
+                            selectedBlock.position = startPosition;
+                        }
+                    }
+                    BoardManager.Instance.ClearHighlight();
                     selectedBlock = null;
                     break;
             }
         }
+    }
+
+    bool SnapToGrid(Transform block)
+    {
+        List<(int, int)> cells = new List<(int, int)>();
+
+        foreach (Transform child in block)
+        {
+            Vector3 pos = child.position;
+            int i = Mathf.RoundToInt(pos.x / BoardManager.Instance.widthCell);
+            int j = Mathf.RoundToInt(pos.y / BoardManager.Instance.heigthCell);
+
+            if (i < 0 || i >= BoardManager.Instance.rows || j < 0 || j >= BoardManager.Instance.cols)
+                return false;
+
+            if (BoardManager.Instance.grid[i, j].Item2 != 0)
+                return false;
+
+            cells.Add((i, j));
+        }
+
+        int pivotI = Mathf.RoundToInt(block.position.x / BoardManager.Instance.widthCell);
+        int pivotJ = Mathf.RoundToInt(block.position.y / BoardManager.Instance.heigthCell);
+        pivotI = Mathf.Clamp(pivotI, 0, BoardManager.Instance.rows - 1);
+        pivotJ = Mathf.Clamp(pivotJ, 0, BoardManager.Instance.cols - 1);
+
+        Vector3 pivotCellPos = BoardManager.Instance.grid[pivotI, pivotJ].Item1.transform.position;
+        Vector3 offset = block.position - pivotCellPos;
+        block.position -= offset;
+
+        foreach (var (i, j) in cells)
+        {
+            BoardManager.Instance.grid[i, j].Item2 = block.GetComponent<Block>().getColor();
+            BoardManager.Instance.grid[i, j].Item3 = block.gameObject;
+        }
+        return true;
+    }
+
+
+    void HighlightNearestCells(Transform block)
+    {
+        List<(int, int)> cells = new List<(int, int)>();
+        foreach (Transform child in block)
+        {
+            Vector3 worldPos = child.position;
+            int i = Mathf.RoundToInt(worldPos.x / BoardManager.Instance.widthCell);
+            int j = Mathf.RoundToInt(worldPos.y / BoardManager.Instance.heigthCell);
+            i = Mathf.Clamp(i, 0, BoardManager.Instance.rows - 1);
+            j = Mathf.Clamp(j, 0, BoardManager.Instance.cols - 1);
+
+            cells.Add((i, j));
+        }
+        BoardManager.Instance.HighlightCells(cells);
     }
 }

@@ -30,7 +30,7 @@ public class BlockManager : MonoBehaviour
             new Vector3(0,2,0),
             new Vector3(1,0,0)
         };
-        SpawnBlock(cells, new Vector3(-2f, -3, 0), materials[1]);
+        SpawnBlock(cells, new Vector3(0.5f, -4f, 10), materials[1],1);
     }
 
     void SpawnSquare()
@@ -41,7 +41,7 @@ public class BlockManager : MonoBehaviour
             new Vector3(0,1,0),
             new Vector3(1,1,0)
         };
-        SpawnBlock(cells, new Vector3(1.5f,-3,0), materials[3]);
+        SpawnBlock(cells, new Vector3(4f,-4f,10), materials[3],3);
     }
 
     void SpawnLShape()
@@ -51,14 +51,14 @@ public class BlockManager : MonoBehaviour
             new Vector3(0,1,0),
             new Vector3(1,0,0)
         };
-        SpawnBlock(cells, new Vector3(-0.25f, -3, 0), materials[3]);
+        SpawnBlock(cells, new Vector3(7.5f, -4f, 10), materials[3],3);
     }
 
-    void SpawnBlock(Vector3[] cells, Vector3 position,Material material)
+    void SpawnBlock(Vector3[] cells, Vector3 position,Material material,int color)
     {
         GameObject blockGO = Instantiate(blockPrefab, position, Quaternion.identity);
         Block block = blockGO.GetComponent<Block>();
         block.cubePrefab = cubePrefab;
-        block.Spawn(cells, material);
+        block.Spawn(cells, material,color);
     }
 }
