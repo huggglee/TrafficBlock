@@ -415,7 +415,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0026edce867137342950d346bf1da5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boardPrefab: {fileID: 0}
   cellPrefab: {fileID: 3396594162217049221, guid: 9e6c6193424a0fb49a7642d584586636, type: 3}
+  camera_object: {fileID: 0}
   rows: 8
   cols: 10
 --- !u!114 &443952576
@@ -581,7 +583,7 @@ Transform:
   m_GameObject: {fileID: 478785541}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -596,15 +598,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 478785541}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16ea7c943f8f6cf4e85a92778f324c5e, type: 3}
+  m_Script: {fileID: 11500000, guid: 0026edce867137342950d346bf1da5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 8
-  gridColor:
-    r: 0
-    g: 1
-    b: 0
-    a: 1
+  boardPrefab: {fileID: 478785541}
+  cellPrefab: {fileID: 3849146029032191353, guid: 0b6885cb2f7f3fd4d97bf127e002eaa2, type: 3}
+  camera_object: {fileID: 1803802728}
+  rows: 8
+  cols: 8
 --- !u!1 &1249313469
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,7 +880,7 @@ Transform:
   m_GameObject: {fileID: 1803802728}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
